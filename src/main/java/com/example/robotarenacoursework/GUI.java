@@ -4,8 +4,12 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.awt.*;
 
 public class GUI extends Application {
     private CustomCanvas customCanvas;
@@ -14,7 +18,7 @@ public class GUI extends Application {
     public void start(Stage primaryStage) {
         // Create the arena, robots, and obstacles
         Robot[] robots = new Robot[2];
-        robots[0] = new Robot("Robot1", 5, 0, 0, 3, 0);
+        robots[0] = new Robot("Robot1", 5, 10, 10, 3, 0);
         robots[1] = new Robot("Robot2", 5, 0, 0, 3, 0);
 
         Obstacle[] obstacles = new Obstacle[2];
@@ -22,27 +26,33 @@ public class GUI extends Application {
         obstacles[1] = new Obstacle(5, 5, 5, "rock");
 
         // Initialize the arena with the robots and obstacles
-        Arena arena = new Arena(1000, 1000, robots, obstacles);
+        Arena arena = new Arena(500, 500, robots, obstacles);
         this.customCanvas = new CustomCanvas(arena);
 
         // Set up the JavaFX canvas
-        Canvas fxCanvas = new Canvas(400, 400);
+        int canvasWidth = arena.getXSize();
+        int canvasHeight = arena.getYSize();
+        Canvas fxCanvas = new Canvas(canvasWidth, canvasHeight);
         GraphicsContext gc = fxCanvas.getGraphicsContext2D();
-
-        // Draw the initial state of the arena, robots, and obstacles
-        this.customCanvas.draw(gc);
 
         // Set up the scene and stage
         StackPane root = new StackPane();
-        root.getChildren().add(fxCanvas);
-        Scene scene = new Scene(root, 400, 400);
+        root.getStyleClass().add("root");
+
+        Scene scene = new Scene(root, canvasWidth, canvasHeight);
+
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
         primaryStage.setTitle("Robot Arena");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Draw the initial state of the arena, robots, and obstacles
+        this.customCanvas.draw(gc);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
+
