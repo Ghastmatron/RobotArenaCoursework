@@ -1,0 +1,8 @@
+.root {
+    -fx-background-color: aliceblue;
+}
+
+.canvas {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+}
