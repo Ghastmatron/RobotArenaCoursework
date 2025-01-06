@@ -27,9 +27,22 @@ public class CustomCanvas {
             gc.fillOval(robot.getXPos() * SCALE, robot.getYPos() * SCALE, SCALE, SCALE);
         }
 
-        // Draw the obstacles
+        // Draw the obstacles with different colours based on their type
         for (Obstacle obstacle : arena.getObstacles()) {
-            gc.setFill(Color.DARKGRAY);
+            switch (obstacle.getType()) {
+                case "rock":
+                    gc.setFill(Color.DARKGRAY);
+                    break;
+                case "sand":
+                    gc.setFill(Color.SANDYBROWN);
+                    break;
+                case "water":
+                    gc.setFill(Color.BLUE);
+                    break;
+                default:
+                    gc.setFill(Color.BLACK);
+                    break;
+            }
             gc.fillRect(obstacle.getXPos() * SCALE, obstacle.getYPos() * SCALE, obstacle.getSize() * SCALE, obstacle.getSize() * SCALE);
         }
     }

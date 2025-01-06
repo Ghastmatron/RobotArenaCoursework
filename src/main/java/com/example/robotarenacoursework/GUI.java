@@ -24,7 +24,7 @@ public class GUI extends Application {
 
         Obstacle[] obstacles = new Obstacle[2]; //array sized 2 for testing
         obstacles[0] = new Obstacle(5, 0, 0, "rock");
-        obstacles[1] = new Obstacle(5, 5, 5, "rock");
+        obstacles[1] = new Obstacle(5, 5, 5, "sand");
 
         // Initialize the arena with the robots and obstacles
         Arena arena = new Arena(50, 50, robots, obstacles);
