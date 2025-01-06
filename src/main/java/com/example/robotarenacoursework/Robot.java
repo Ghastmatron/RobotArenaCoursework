@@ -36,6 +36,15 @@ public class Robot {
     public int getDirection(){
         return direction;
     }
+    public void setDirection(double direction){
+        this.direction = (int) direction;
+    }
+    public int setXPos(int XPosition){
+        return this.XPosition = XPosition;
+    }
+    public int setYPos(int YPosition){
+        return this.YPosition = YPosition;
+    }
 
     //main method for testing
     public static void main(String[] args){

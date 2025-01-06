@@ -32,8 +32,8 @@ public class Arena {
     //main method for testing
     public static void main(String[] args){
         Robot[] robots = new Robot[2];
-        robots[0] = new Robot("Robot1", 5, 0, 0, 3, 0);
-        robots[1] = new Robot("Robot2", 5, 0, 0, 3, 0);
+        robots[0] = new Robot("Robot1", 5, 4, 4, 3, 0);
+        robots[1] = new Robot("Robot2", 5, 6, 6, 3, 0);
 
         Obstacle[] obstacles = new Obstacle[2];
         obstacles[0] = new Obstacle(5, 0, 0, "rock");
