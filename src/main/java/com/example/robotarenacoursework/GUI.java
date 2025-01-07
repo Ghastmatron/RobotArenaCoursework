@@ -20,6 +20,7 @@ public class GUI extends Application {
         // Create the arena, robots, and obstacles
         Arena arena = new Arena(50, 50, null, null);
 
+        /*
         //create robots
         MoveableRobot[] robots = new MoveableRobot[2];//array sized 2 for testing
         robots[0] = new MoveableRobot("Robot1", 1, 20, 30, 3, 0, arena);
@@ -33,6 +34,8 @@ public class GUI extends Application {
         // Initialize the arena with the robots and obstacles using the set methods
         arena.setRobots(robots);
         arena.setObstacles(obstacles);
+
+        */
         this.customCanvas = new CustomCanvas(arena);
 
         // Set up the JavaFX canvas

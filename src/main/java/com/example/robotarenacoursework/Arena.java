@@ -34,7 +34,6 @@ public class Arena {
         return this.obstacles = obstacles;
     }
 
-
     //Method to check and correct positions if they are out of bounds
     public void checkBounds(Robot robot){
         if (robot.getXPos() < 0) {
@@ -50,8 +49,6 @@ public class Arena {
             robot.setYPos(ySize - 1);
         }
     }
-
-
 
     //main method for testing
     public static void main(String[] args){

@@ -28,7 +28,6 @@ public class Obstacle {
         return type;
     }
 
-
     //main method for testing
     public static void main(String[] args){
         Obstacle obstacle = new Obstacle(5, 0, 0, "rock");
