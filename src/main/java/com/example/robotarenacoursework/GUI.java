@@ -18,16 +18,21 @@ public class GUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Create the arena, robots, and obstacles
-        MoveableRobot[] robots = new MoveableRobot[2];//array sized 2 for testing
-        robots[0] = new MoveableRobot("Robot1", 5, 20, 30, 3, 0);
-        robots[1] = new MoveableRobot("Robot2", 5, 20, 20, 3, 0);
+        Arena arena = new Arena(50, 50, null, null);
 
+        //create robots
+        MoveableRobot[] robots = new MoveableRobot[2];//array sized 2 for testing
+        robots[0] = new MoveableRobot("Robot1", 1, 20, 30, 3, 0, arena);
+        robots[1] = new MoveableRobot("Robot2", 1, 20, 20, 3, 0, arena);
+
+        //create obstacles
         Obstacle[] obstacles = new Obstacle[2]; //array sized 2 for testing
         obstacles[0] = new Obstacle(5, 0, 0, "rock");
         obstacles[1] = new Obstacle(5, 5, 5, "sand");
 
-        // Initialize the arena with the robots and obstacles
-        Arena arena = new Arena(50, 50, robots, obstacles);
+        // Initialize the arena with the robots and obstacles using the set methods
+        arena.setRobots(robots);
+        arena.setObstacles(obstacles);
         this.customCanvas = new CustomCanvas(arena);
 
         // Set up the JavaFX canvas
@@ -53,7 +58,7 @@ public class GUI extends Application {
         this.customCanvas.draw(gc);
 
         // Set up the event handler
-        RobotEventHandler eventHandler = new RobotEventHandler();
+        com.example.robotarenacoursework.RobotEventHandler eventHandler = new RobotEventHandler();
         eventHandler.addEventHandlers(scene, robots);
 
         AnimationTimer timer = new AnimationTimer() {

@@ -27,6 +27,30 @@ public class Arena {
     public Obstacle[] getObstacles(){
         return obstacles;
     }
+    public Robot[] setRobots(Robot[] robots){
+        return this.robots = robots;
+    }
+    public Obstacle[] setObstacles(Obstacle[] obstacles){
+        return this.obstacles = obstacles;
+    }
+
+
+    //Method to check and correct positions if they are out of bounds
+    public void checkBounds(Robot robot){
+        if (robot.getXPos() < 0) {
+            robot.setXPos(0);
+        }
+        if (robot.getXPos() > xSize) {
+            robot.setXPos(xSize - 1);
+        }
+        if (robot.getYPos() < 0) {
+            robot.setYPos(0);
+        }
+        if (robot.getYPos() > ySize) {
+            robot.setYPos(ySize - 1);
+        }
+    }
+
 
 
     //main method for testing
