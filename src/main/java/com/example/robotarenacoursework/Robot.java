@@ -42,6 +42,10 @@ public class Robot {
         return direction;
     }
 
+    public int getSensors() {
+        return sensors;
+    }
+
     public void setDirection(double direction) {
         this.direction = (int) direction;
     }

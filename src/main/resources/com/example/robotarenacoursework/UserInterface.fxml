@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.robotarenacoursework.UserInterfaceController"
+            prefHeight="600.0" prefWidth="800.0">
+    <VBox>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="New"/>
+                <MenuItem text="Open"/>
+                <MenuItem text="Save"/>
+                <MenuItem text="Exit"/>
+            </Menu>
+            <Menu text="Edit">
+                <MenuItem text="Undo"/>
+                <MenuItem text="Redo"/>
+            </Menu>
+            <Menu text="Help">
+                <MenuItem text="About"/>
+            </Menu>
+        </MenuBar>
+        <HBox>
+            <Canvas fx:id="canvas" width="600.0" height="600.0"/>
+            <VBox spacing="10" alignment="TOP_CENTER" style="-fx-padding: 10;">
+                <Button text="Add Robot" onAction="#handleAddRobot"/>
+                <Button text="Remove Robot" onAction="#handleRemoveRobot"/>
+                <Button text="Create New Arena" onAction="#handleCreateNewArena"/>
+                <!-- Add more buttons as needed -->
+            </VBox>
+        </HBox>
+    </VBox>
+</AnchorPane>

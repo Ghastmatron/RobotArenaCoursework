@@ -58,6 +58,7 @@ public class MoveableRobot extends Robot {
                 setDirection((getDirection() + (elapsedTime / 1000.0) * TURNING_SPEED) % 360); //updates direction based on elapsed time
             }
         }
+        moveRandomly();
         arena.checkBounds(this); //checks if the robot is within bounds
     }
 
