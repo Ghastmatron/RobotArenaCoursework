@@ -5,45 +5,47 @@ import javafx.scene.paint.Color;
 
 public class CustomCanvas {
     private Arena arena;
-    private static final int SCALE = 10; //Scaling factor
 
-    // Constructor to initialize the CustomCanvas with an Arena
     public CustomCanvas(Arena arena) {
         this.arena = arena;
     }
 
-    // Method to draw the arena, robots, and obstacles
     public void draw(GraphicsContext gc) {
-        // Clear the canvas
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        drawBorder(gc);
+        drawRobots(gc);
+    }
 
-        // Draw the arena
-        gc.setFill(Color.LIGHTGRAY);
-        gc.fillRect(0, 0, arena.getXSize() * SCALE, arena.getYSize() * SCALE);
+    private void drawBorder(GraphicsContext gc) {
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeRect(0, 0, arena.getXSize() * 10, arena.getYSize() * 10);
+    }
 
-        // Draw the robots
-        for (Robot robot : arena.getRobots()) {
-            gc.setFill(Color.BLUE);
-            gc.fillOval(robot.getXPos() * SCALE, robot.getYPos() * SCALE, SCALE, SCALE);
+    private void drawRobots(GraphicsContext gc) {
+        for (MoveableRobot robot : arena.getRobots()) {
+            drawRobot(gc, robot);
         }
+    }
 
-        // Draw the obstacles with different colours based on their type
-        for (Obstacle obstacle : arena.getObstacles()) {
-            switch (obstacle.getType()) {
-                case "rock":
-                    gc.setFill(Color.DARKGRAY);
-                    break;
-                case "sand":
-                    gc.setFill(Color.SANDYBROWN);
-                    break;
-                case "water":
-                    gc.setFill(Color.BLUE);
-                    break;
-                default:
-                    gc.setFill(Color.BLACK);
-                    break;
-            }
-            gc.fillRect(obstacle.getXPos() * SCALE, obstacle.getYPos() * SCALE, obstacle.getSize() * SCALE, obstacle.getSize() * SCALE);
-        }
+    private void drawRobot(GraphicsContext gc, MoveableRobot robot) {
+        double x = robot.getXPos() * 10;
+        double y = robot.getYPos() * 10;
+        double xSize = robot.getXSize() * 10;
+        double ySize = robot.getYSize() * 10;
+        double direction = robot.getDirection();
+
+        gc.setFill(Color.BLUE);
+        gc.fillOval(x - xSize / 2, y - ySize / 2, xSize, ySize);
+
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(2);
+        double whiskerLength = Math.max(xSize, ySize) * 2;
+        double leftWhiskerX = x + whiskerLength * Math.cos(Math.toRadians(direction - 45));
+        double leftWhiskerY = y + whiskerLength * Math.sin(Math.toRadians(direction - 45));
+        double rightWhiskerX = x + whiskerLength * Math.cos(Math.toRadians(direction + 45));
+        double rightWhiskerY = y + whiskerLength * Math.sin(Math.toRadians(direction + 45));
+        gc.strokeLine(x, y, leftWhiskerX, leftWhiskerY);
+        gc.strokeLine(x, y, rightWhiskerX, rightWhiskerY);
     }
 }

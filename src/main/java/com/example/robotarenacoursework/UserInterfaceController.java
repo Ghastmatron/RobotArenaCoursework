@@ -1,3 +1,4 @@
+// UserInterfaceController.java
 package com.example.robotarenacoursework;
 
 import javafx.fxml.FXML;
@@ -9,13 +10,15 @@ import javafx.scene.control.TextInputDialog;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserInterfaceController {
     @FXML
     private Canvas canvas;
 
     private Arena arena;
-    private MoveableRobot[] robots;
+    private List<MoveableRobot> robots = new ArrayList<>();
 
     // Getter for the canvas
     public Canvas getCanvas() {
@@ -28,7 +31,7 @@ public class UserInterfaceController {
     }
 
     // Setter for the robots
-    public void setRobots(MoveableRobot[] robots) {
+    public void setRobots(List<MoveableRobot> robots) {
         this.robots = robots;
     }
 
@@ -96,24 +99,13 @@ public class UserInterfaceController {
 
     // Method to add a robot with the given position
     private void addRobot(int xPos, int yPos) {
-        if (robots.length > 0) {
-            // Copy stats from the first robot
-            MoveableRobot templateRobot = robots[0];
-            MoveableRobot newRobot = new MoveableRobot(
-                    "Robot" + (robots.length + 1),
-                    templateRobot.getSpeed(),
-                    xPos,
-                    yPos,
-                    templateRobot.getSensors(), // Assuming getSensors() is the correct method
-                    templateRobot.getDirection(),
-                    arena
-            );
+        if (robots.size() >= 0) {
+            //create a new basic robot
+            //later add different types of robots
+            MoveableRobot basicRobot = new MoveableRobot("Robot", 0.2, xPos, yPos, 3, 0, arena, 5, 5);
 
-            // Add the new robot to the array
-            MoveableRobot[] newRobots = new MoveableRobot[robots.length + 1];
-            System.arraycopy(robots, 0, newRobots, 0, robots.length);
-            newRobots[robots.length] = newRobot;
-            robots = newRobots;
+            //add the robot to the list of robots in arena
+            robots.add(basicRobot);
             arena.setRobots(robots);
         }
     }
@@ -122,10 +114,8 @@ public class UserInterfaceController {
     @FXML
     private void handleRemoveRobot() {
         // Logic to remove a robot
-        if (robots.length > 0) {
-            MoveableRobot[] newRobots = new MoveableRobot[robots.length - 1];
-            System.arraycopy(robots, 0, newRobots, 0, robots.length - 1);
-            robots = newRobots;
+        if (!robots.isEmpty()) {
+            robots.remove(robots.size() - 1);
             arena.setRobots(robots);
         } else {
             showAlert("Remove Robot", "No robots to remove.");
@@ -137,7 +127,7 @@ public class UserInterfaceController {
     private void handleCreateNewArena() {
         // Logic to create a new arena
         arena = new Arena(50, 50, null, null);
-        robots = new MoveableRobot[0];
+        robots.clear();
         arena.setRobots(robots);
         showAlert("Create New Arena", "New arena created.");
     }

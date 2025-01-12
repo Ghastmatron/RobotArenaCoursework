@@ -1,32 +1,30 @@
 package com.example.robotarenacoursework;
 
 public class Robot {
-    //keeping basic for now, will add more as needed
-    //robots will need
-    //a name, speed, position, sensors, and a direction(in degrees)
-
     private String name;
-    private int speed;
+    private double speed;
     private double XPosition;
     private double YPosition;
-    private int sensors;//unsure what data type it should be, perhaps its own class?
-    private int direction;
+    private int sensors;
+    private double direction;
+    private double xSize, ySize;
 
-    public Robot(String name, int speed, double XPosition, double YPosition, int sensors, int direction) {
+    public Robot(String name, double speed, double XPosition, double YPosition, int sensors, double direction, double xSize, double ySize) {
         this.name = name;
         this.speed = speed;
         this.XPosition = XPosition;
         this.YPosition = YPosition;
         this.sensors = sensors;
         this.direction = direction;
+        this.xSize = xSize;
+        this.ySize = ySize;
     }
 
-    //creating a list of getters for other classes to access the robot's data
     public String getName() {
         return name;
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -38,12 +36,20 @@ public class Robot {
         return YPosition;
     }
 
-    public int getDirection() {
+    public double getDirection() {
         return direction;
     }
 
     public int getSensors() {
         return sensors;
+    }
+
+    public double getXSize() {
+        return xSize;
+    }
+
+    public double getYSize() {
+        return ySize;
     }
 
     public void setDirection(double direction) {
@@ -58,13 +64,7 @@ public class Robot {
         return this.YPosition = YPosition;
     }
 
-    //main method for testing
-    public static void main(String[] args) {
-        Robot robot = new Robot("Robot1", 5, 0, 0, 3, 0);
-        System.out.println(robot.getName());
-        System.out.println(robot.getSpeed());
-        System.out.println(robot.getXPos());
-        System.out.println(robot.getYPos());
-        System.out.println(robot.getDirection());
+    public double setSpeed(double speed) {
+        return this.speed = speed;
     }
 }
