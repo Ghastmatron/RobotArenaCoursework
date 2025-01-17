@@ -1,6 +1,8 @@
 package com.example.robotarenacoursework;
 
-import java.util.Random;
+import java.util.concurrent.*;
+import java.awt.geom.Line2D;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MoveableRobot extends Robot {
     private Arena arena; // Reference to the arena
@@ -8,15 +10,21 @@ public class MoveableRobot extends Robot {
     private boolean turningRight = false; // Flag to indicate if the robot is turning right
     private long turningStartTime = 0; // Start time of the turning action
     private long turningDuration = 0; // Duration of the turning action
-    private Random random = new Random(); // Random number generator
     private static final double TURNING_SPEED = 120; // Speed of turning
-    private boolean collisionDetected = false; // Flag to indicate if a collision is detected
-    private boolean resumeMovement = true; // Flag to indicate if the robot should resume moving forward
+    private boolean resumeMovement = true;  // Flag to indicate if the robot should resume moving forward
+    private ScheduledExecutorService scheduler; // Scheduler to update the robot's state
+    private long collisionTimer = 100; // Timer to prevent multiple collisions
+    private long currentTime; // Timer for current time
+    private static final long COLLISION_DELAY = 150; // Timer to prevent multiple collisions
+    private int consecutiveTurns = 0; // Counter for consecutive turns
+    private static final int MAX_CONSECUTIVE_TURNS = 5; // Threshold for consecutive turns
+    private boolean stuck = false; // Flag to indicate if the robot is stuck
 
     // Constructor to initialize the robot
-    public MoveableRobot(String name, double speed, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize) {
-        super(name, speed, xPos, yPos, sensors, direction, xSize, ySize);
+    public MoveableRobot(String name, double speed, double MaxSpeed, double MinSpeed, double Accelleration, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize) {
+        super(name, speed, MaxSpeed, MinSpeed, Accelleration, xPos, yPos, sensors, direction, xSize, ySize);
         this.arena = arena;
+        startAccelerationTask(); // Start the acceleration task
     }
 
     // Method to start turning left for a specified duration
@@ -52,6 +60,7 @@ public class MoveableRobot extends Robot {
                 stopTurningLeft(); // Stop turning left
             } else {
                 setDirection((getDirection() - (elapsedTime / 1000.0) * TURNING_SPEED) % 360); // Update direction
+                consecutiveTurns++;
             }
         }
         if (turningRight) { // If the robot is turning right
@@ -60,28 +69,50 @@ public class MoveableRobot extends Robot {
                 stopTurningRight(); // Stop turning right
             } else {
                 setDirection((getDirection() + (elapsedTime / 1000.0) * TURNING_SPEED) % 360); // Update direction
+                consecutiveTurns++;
             }
         }
-        if (!collisionDetected && resumeMovement) { // If no collision is detected and movement should resume
-            moveForward(); // Move forward
+        // Check for excessive spinning
+        if (consecutiveTurns > MAX_CONSECUTIVE_TURNS) {
+            stuck = true;
+            stopAccelerationTask();
+            stopDeccelerationTask();
+            setSpeed(0);
         }
-        arena.checkBoundsAndSensorDetections(this); // Check bounds and collisions
+        // If stuck, slowly rotate until no obstacles are detected
+        if (stuck) {
+            if (!detectSensorDetectionWithObstacles() && !arena.detectRobotSensorDetection(this) && !arena.detectBoundarySensorDetection(this)) {
+                stuck = false;
+                consecutiveTurns = 0;
+                startAccelerationTask();
+            } else {
+                setDirection((getDirection() + 1) % 360); // Slowly rotate
+            }
+        } else {
+            // Check for collisions
+            arena.checkCollision();
+            // Check for boundary collisions
+            arena.checkBoundaryCollision();
+            moveForward(); // Move the robot forward
+            arena.checkBoundsAndSensorDetections(this); // Check bounds and collisions
+        }
     }
 
     // Method to turn the robot left
     public void turnLeft() {
-        setDirection(getDirection() - 10);
+        this.setDirection(getDirection() - 10);
     }
 
     // Method to turn the robot right
     public void turnRight() {
-        setDirection(getDirection() + 10);
+        this.setDirection(getDirection() + 10);
     }
 
     // Method to move the robot forward
     public void moveForward() {
-        setXPos(getXPos() + (getSpeed() * Math.cos(Math.toRadians(getDirection())))); // Update x position
-        setYPos(getYPos() + (getSpeed() * Math.sin(Math.toRadians(getDirection())))); // Update y position
+        double directionInRadians = Math.toRadians(getDirection()); // Convert direction to radians
+        setXPos(getXPos() + (getSpeed() * Math.cos(directionInRadians))); // Update x position
+        setYPos(getYPos() + (getSpeed() * Math.sin(directionInRadians))); // Update y position
         arena.checkBoundsAndSensorDetections(this); // Check bounds and collisions
     }
 
@@ -99,9 +130,12 @@ public class MoveableRobot extends Robot {
         double rightWhiskerX = xPos + whiskerLength * Math.cos(Math.toRadians(direction + 45));
         double rightWhiskerY = yPos + whiskerLength * Math.sin(Math.toRadians(direction + 45));
 
-        // Check if the point is near either whisker
-        return isPointNearLine(xPos, yPos, leftWhiskerX, leftWhiskerY, x, y) ||
-                isPointNearLine(xPos, yPos, rightWhiskerX, rightWhiskerY, x, y);
+        // Define whisker lines
+        Line2D leftWhisker = new Line2D.Double(xPos, yPos, leftWhiskerX, leftWhiskerY);
+        Line2D rightWhisker = new Line2D.Double(xPos, yPos, rightWhiskerX, rightWhiskerY);
+
+        // Check if the point intersects with either whisker
+        return leftWhisker.intersects(x - 2.5, y - 2.5, 5, 5) || rightWhisker.intersects(x - 2.5, y - 2.5, 5, 5);
     }
 
     // Method to check if a point is near a line
@@ -111,36 +145,60 @@ public class MoveableRobot extends Robot {
         return distance < 5; // Return true if the distance is less than 5
     }
 
+    public boolean isSensorDetection(double x, double y) {
+        return detectSensorDetection(x, y);
+    }
+
     // Method to correct the movement of the robot
     public void correctMovement(boolean leftWhiskerDetected, boolean rightWhiskerDetected) {
-        double currentSpeed = getSpeed(); // Store the current speed
-        double zeroSpeed = 0; // Set the speed to zero
-
         // If both whiskers detect an obstacle, turn 180 degrees
         if (leftWhiskerDetected && rightWhiskerDetected) {
-            setSpeed(zeroSpeed); // Set the speed to zero
+            // stop accelleration task
+            stopAccelerationTask();
+            // start deceleration task
+            startDeccelerationTask();
             // turn left until no longer needed to turn left
             turnLeft();
-            setSpeed(currentSpeed); // Set the speed to the current speed
+            // set the left whisker detected to false
+            // set the right whisker detected to false
+            leftWhiskerDetected = false;
+            rightWhiskerDetected = false;
+            // print statement
+            System.out.println("Both Whiskers Detected");
+
         } else if (leftWhiskerDetected) { // If only the left whisker detects an obstacle, turn right
-            setSpeed(zeroSpeed); // Set the speed to zero
+            // stop accelleration task
+            stopAccelerationTask();
+            // start deceleration task
+            startDeccelerationTask();
+            //turn right until no longer needed to turn right
             turnRight();
-            while (detectSensorDetectionWithObstacles() || arena.detectRobotSensorDetection(this) || arena.detectBoundarySensorDetection(this)) {
-                turnRight();
-            }
-            setSpeed(currentSpeed); // Set the speed to the current speed
+            // set the left whisker detected to false
+            leftWhiskerDetected = false;
+            // print statement
+            System.out.println("Left Whisker Detected");
+
         } else if (rightWhiskerDetected) { // If only the right whisker detects an obstacle, turn left
-            setSpeed(zeroSpeed); // Set the speed to zero
+            // stop accelleration task
+            stopAccelerationTask();
+            // start deceleration task
+            startDeccelerationTask();
+            //turn left until no longer needed to turn left
             turnLeft();
-            while (detectSensorDetectionWithObstacles() || arena.detectRobotSensorDetection(this) || arena.detectBoundarySensorDetection(this)) {
-                turnLeft();
-            }
-            setSpeed(currentSpeed); // Set the speed to the current speed
+            // set the right whisker detected to false
+            rightWhiskerDetected = false;
+            // print statement
+            System.out.println("Right Whisker Detected");
         }
 
         // Check if the whiskers are no longer detecting any obstacles
         if (!detectSensorDetectionWithObstacles() && !arena.detectRobotSensorDetection(this) && !arena.detectBoundarySensorDetection(this)) {
-            setSpeed(currentSpeed); // Resume movement
+            // Resume movement
+            resumeMovement = true;
+            //stop deceleration task
+            stopDeccelerationTask();
+            //start acceleration task
+            startAccelerationTask();
         }
     }
 
@@ -164,10 +222,102 @@ public class MoveableRobot extends Robot {
         return distance < (this.getXSize() + otherRobot.getXSize()) / 2;
     }
 
+    // Method to handle collision with other robots
     public void handleCollision(MoveableRobot otherRobot) {
-        double angle = Math.atan2(otherRobot.getYPos() - this.getYPos(), otherRobot.getXPos() - this.getXPos());
-        double newDirection = Math.toDegrees(angle) + 180;
-        this.setDirection(newDirection);
-        this.setSpeed(this.getSpeed() * 0.5); // Reduce speed after collision
+        currentTime = System.currentTimeMillis();
+        if (currentTime < collisionTimer) {
+            return;
+        } else {
+            collisionTimer = currentTime + COLLISION_DELAY;
+            double angle = Math.atan2(otherRobot.getYPos() - this.getYPos(), otherRobot.getXPos() - this.getXPos());
+            double newDirection = Math.toDegrees(angle) + 180;
+
+            // Add a small random factor to the direction to prevent robots getting stuck
+            newDirection += ThreadLocalRandom.current().nextDouble(-10, 10);
+
+            this.setDirection(newDirection);
+            this.setSpeed(this.getSpeed() * 0.5); // Reduce speed after collision
+        }
     }
+
+    public void handleBoundaryCollision() {
+        handleOutofBounds();
+        // Timer for current time
+        long currentTime = System.currentTimeMillis();
+        // Check if the collision timer is less than the current time
+        if(currentTime < collisionTimer) {
+            return;
+        }else{
+            // Handle Collision
+            //stop accelleration task
+            stopAccelerationTask();
+            // start deceleration task
+            startDeccelerationTask();
+            double newDirection = this.getDirection() + 180;
+            this.setDirection(newDirection);
+            this.setSpeed(this.getSpeed() * 0.5); // Reduce speed after collision
+            //check if robot is still in bounds
+            if (!arena.detectBoundarySensorDetection(this)) {
+                // Resume movement
+                resumeMovement = true;
+                //stop deceleration task
+                stopDeccelerationTask();
+                //start acceleration task
+                startAccelerationTask();
+            }
+        }
+    }
+
+    // Method to handle if the robot is out of bounds
+    public void handleOutofBounds(){
+        //check the edge of the robot
+        double x1 = this.getXPos() - this.getXSize() / 2;
+        double x2 = this.getXPos() + this.getXSize() / 2;
+        double y1 = this.getYPos() - this.getYSize() / 2;
+        double y2 = this.getYPos() + this.getYSize() / 2;
+        //check if the robot is out of bounds
+        if (x1 < 0) {
+            this.setXPos(this.getXSize() / 2);
+        } else if (x2 > arena.getXSize()) {
+            this.setXPos(arena.getXSize() - this.getXSize() / 2);
+        }
+        if (y1 < 0) {
+            this.setYPos(this.getYSize() / 2);
+        } else if (y2 > arena.getYSize()) {
+            this.setYPos(arena.getYSize() - this.getYSize() / 2);
+        }
+
+    }
+
+    // Method to start the acceleration task
+    private void startAccelerationTask() {
+        scheduler = Executors.newScheduledThreadPool(1); // Create a new scheduled executor service
+        scheduler.scheduleAtFixedRate(this::accelerate, 0, 1, TimeUnit.SECONDS); // Schedule the acceleration task
+    }
+
+    private void accelerate() {
+        if (getSpeed() < getMaxSpeed()) { // If the speed is less than the maximum speed
+            this.setSpeed(getSpeed() + getAcceleration()); // Increase the speed
+        }
+    }
+
+    private void stopAccelerationTask() {
+        scheduler.shutdown(); // Shutdown the scheduler
+    }
+
+    private void startDeccelerationTask() {
+        scheduler = Executors.newScheduledThreadPool(1); // Create a new scheduled executor service
+        scheduler.scheduleAtFixedRate(this::deccelerate, 0, 1, TimeUnit.SECONDS); // Schedule the deceleration task
+    }
+
+    private void deccelerate() {
+        if (getSpeed() > getMinSpeed()) { // If the speed is greater than the minimum speed
+            this.setSpeed(getSpeed() - getAcceleration()); // Decrease the speed
+        }
+    }
+
+    private void stopDeccelerationTask() {
+        scheduler.shutdown(); // Shutdown the scheduler
+    }
+
 }

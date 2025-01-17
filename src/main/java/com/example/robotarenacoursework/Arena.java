@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Arena {
     private int xSize, ySize;
-    private List<MoveableRobot> robots;
+    private ArrayList<MoveableRobot> robots;
     private Obstacle[] obstacles;
 
-    public Arena(int xSize, int ySize, List<MoveableRobot> robots, Obstacle[] obstacles) {
+    public Arena(int xSize, int ySize, ArrayList<MoveableRobot> robots, Obstacle[] obstacles) {
         this.xSize = xSize;
         this.ySize = xSize;
         this.robots = robots;
-        this.obstacles = obstacles;
+        this.obstacles = obstacles != null ? obstacles : new Obstacle[0]; // If obstacles is null, create an empty array
     }
 
     public int getXSize() {
@@ -23,7 +23,7 @@ public class Arena {
         return ySize;
     }
 
-    public List<MoveableRobot> getRobots() {
+    public ArrayList<MoveableRobot> getRobots() {
         return robots;
     }
 
@@ -31,7 +31,7 @@ public class Arena {
         return obstacles;
     }
 
-    public void setRobots(List<MoveableRobot> robots) {
+    public void setRobots(ArrayList<MoveableRobot> robots) {
         this.robots = robots;
     }
 
@@ -48,7 +48,6 @@ public class Arena {
         double yPos = robot.getYPos();
         double direction = robot.getDirection();
         double whiskerLength = Math.max(robot.getXSize(), robot.getYSize()) * 2;
-        double originalSpeed = robot.getSpeed();
 
         // Calculate whisker positions
         double leftWhiskerX = xPos + whiskerLength * Math.cos(Math.toRadians(direction - 45));
@@ -80,7 +79,7 @@ public class Arena {
             return false;
         } else {
             for (Obstacle obstacle : obstacles) {
-                if (robot.detectSensorDetection(obstacle.getXPos(), obstacle.getYPos())) {
+                if (robot.isSensorDetection(obstacle.getXPos(), obstacle.getYPos())) {
                     return true;
                 }
             }
@@ -105,7 +104,7 @@ public class Arena {
     public void checkCollisions() {
         for (MoveableRobot robot : robots) {
             for (Obstacle obstacle : obstacles) {
-                if (robot.detectSensorDetection(obstacle.getXPos(), obstacle.getYPos())) {
+                if (robot.isSensorDetection(obstacle.getXPos(), obstacle.getYPos())) {
                     handleCollision(robot, obstacle);
                 }
             }
@@ -114,12 +113,13 @@ public class Arena {
 
     private void handleCollision(MoveableRobot robot, Obstacle obstacle) {
         robot.turnLeft();
+        System.out.println("Collision handled");
     }
 
     // Method to check if robots have collided with another robot
     public boolean detectRobotSensorDetection(MoveableRobot robot) {
         for (MoveableRobot otherRobot : robots) {
-            if (robot != otherRobot && robot.detectSensorDetection(otherRobot.getXPos(), otherRobot.getYPos())) {
+            if (robot != otherRobot && robot.isSensorDetection(otherRobot.getXPos(), otherRobot.getYPos())) {
                 return true;
             }
         }
@@ -139,10 +139,25 @@ public class Arena {
         }
     }
 
+    public void checkBoundaryCollision() {
+        for (MoveableRobot robot : robots) {
+            //check the edge of the robot
+            double x1 = robot.getXPos() - robot.getXSize() / 2;
+            double x2 = robot.getXPos() + robot.getXSize() / 2;
+            double y1 = robot.getYPos() - robot.getYSize() / 2;
+            double y2 = robot.getYPos() + robot.getYSize() / 2;
+            //check if the robot is out of bounds
+            if (x1 < 0 || x2 > xSize || y1 < 0 || y2 > ySize) {
+                robot.handleBoundaryCollision();
+            }
+        }
+    }
+
+    /*
     public static void main(String[] args) {
-        List<MoveableRobot> robots = new ArrayList<>();
-        robots.add(new MoveableRobot("Robot1", 5, 4, 4, 3, 0, null, 3, 3));
-        robots.add(new MoveableRobot("Robot2", 5, 6, 6, 3, 0, null, 3, 3));
+        ArrayList<MoveableRobot> robots = new ArrayList<>();
+        robots.add(new MoveableRobot("Robot1", 5, 5, 1, 0.1, 10, 6, 3, 0, null, 3, 3));
+        robots.add(new MoveableRobot("Robot2", 5, 5, 1, 0.1, 20, 6, 3, 180, null, 3, 3));
 
         Obstacle[] obstacles = new Obstacle[2];
         obstacles[0] = new Obstacle(0.0, 0.0, "rock");
@@ -156,4 +171,6 @@ public class Arena {
         System.out.println(arena.getObstacles()[0]);
         System.out.println(arena.getObstacles()[1]);
     }
+
+     */
 }

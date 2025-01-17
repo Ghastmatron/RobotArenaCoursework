@@ -1,17 +1,23 @@
 package com.example.robotarenacoursework;
 
 public class Robot {
+    private final double MaxSpeed;
     private String name;
     private double speed;
+    private double MinSpeed;
+    private double Accelleration;
     private double XPosition;
     private double YPosition;
     private int sensors;
     private double direction;
     private double xSize, ySize;
 
-    public Robot(String name, double speed, double XPosition, double YPosition, int sensors, double direction, double xSize, double ySize) {
+    public Robot(String name, double speed, double MaxSpeed, double MinSpeed, double Acceleration, double XPosition, double YPosition, int sensors, double direction, double xSize, double ySize) {
         this.name = name;
         this.speed = speed;
+        this.MaxSpeed = MaxSpeed;
+        this.MinSpeed = MinSpeed;
+        this.Accelleration = Acceleration;
         this.XPosition = XPosition;
         this.YPosition = YPosition;
         this.sensors = sensors;
@@ -26,6 +32,18 @@ public class Robot {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public double getMinSpeed() {
+        return MinSpeed;
+    }
+
+    public double getAcceleration() {
+        return Accelleration;
+    }
+
+    public double getMaxSpeed() {
+        return MaxSpeed;
     }
 
     public double getXPos() {

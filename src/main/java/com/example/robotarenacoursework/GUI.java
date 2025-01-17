@@ -1,5 +1,4 @@
 package com.example.robotarenacoursework;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +14,7 @@ import java.util.List;
 public class GUI extends Application {
     private CustomCanvas customCanvas;
     private static final int SCALE = 10; // Scaling factor
-    private List<MoveableRobot> robots = new ArrayList<>(); // Use a dynamic list
+    private ArrayList<MoveableRobot> robots = new ArrayList<>(); // Use a dynamic list
     private Arena arena; // Class-level variable for arena
 
     @Override
@@ -69,7 +68,6 @@ public class GUI extends Application {
             // Set up the event handler
             RobotEventHandler eventHandler = new RobotEventHandler();
             eventHandler.addEventHandlers(scene, robots);
-
             AnimationTimer timer = new AnimationTimer() {
                 @Override
                 public void handle(long now) {
@@ -85,8 +83,6 @@ public class GUI extends Application {
                     gc.clearRect(0, 0, fxCanvas.getWidth(), fxCanvas.getHeight());
                     // Draw the updated state of the arena, robots, and obstacles
                     customCanvas.draw(gc);
-                    //print statement
-                    System.out.println("Timer running");
                 }
             };
             timer.start();

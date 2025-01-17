@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RobotEventHandler {
@@ -14,7 +15,7 @@ public class RobotEventHandler {
     private Timeline turningLeftTimeline;
     private Timeline turningRightTimeline;
 
-    public void addEventHandlers(Scene scene, List<MoveableRobot> robots) {
+    public void addEventHandlers(Scene scene, ArrayList<MoveableRobot> robots) {
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.W) {
                 movingForward = true;
@@ -66,12 +67,9 @@ public class RobotEventHandler {
             }
         });
     }
-    public void updateRobots(List<MoveableRobot> robots) {
+    public void updateRobots(ArrayList<MoveableRobot> robots) {
         for (MoveableRobot robot : robots) {
             robot.update();
-            if (movingForward) {
-                robot.moveForward();
-            }
         }
     }
 }

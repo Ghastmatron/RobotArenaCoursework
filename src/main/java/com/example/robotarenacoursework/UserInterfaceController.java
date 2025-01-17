@@ -11,14 +11,13 @@ import javafx.scene.control.TextInputDialog;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserInterfaceController {
     @FXML
     private Canvas canvas;
 
     private Arena arena;
-    private List<MoveableRobot> robots = new ArrayList<>();
+    private ArrayList<MoveableRobot> robots = new ArrayList<>();
 
     // Getter for the canvas
     public Canvas getCanvas() {
@@ -31,12 +30,13 @@ public class UserInterfaceController {
     }
 
     // Setter for the robots
-    public void setRobots(List<MoveableRobot> robots) {
+    public void setRobots(ArrayList<MoveableRobot> robots) {
         this.robots = robots;
     }
 
     // Method to handle adding a robot
     @FXML
+
     private void handleAddRobot() {
         // Create a confirmation alert to choose position type
         Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -102,8 +102,7 @@ public class UserInterfaceController {
         if (robots.size() >= 0) {
             //create a new basic robot
             //later add different types of robots
-            MoveableRobot basicRobot = new MoveableRobot("Robot", 0.2, xPos, yPos, 3, 0, arena, 5, 5);
-
+            MoveableRobot basicRobot = new MoveableRobot("Robot", 0.2, 1, 0.1, 0.05, xPos, yPos, 5, 0, arena, 2, 2);
             //add the robot to the list of robots in arena
             robots.add(basicRobot);
             arena.setRobots(robots);
