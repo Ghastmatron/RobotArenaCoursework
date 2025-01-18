@@ -28,7 +28,7 @@ public class GUI extends Application {
             UserInterfaceController controller = loader.getController();
 
             // Create the arena, robots, and obstacles
-            arena = new Arena(50, 50, robots, null);
+            arena = new Arena(500, 500, robots, null);
 
             /*
             // Create robots

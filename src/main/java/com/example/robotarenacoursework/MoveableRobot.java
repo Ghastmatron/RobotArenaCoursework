@@ -51,6 +51,25 @@ public class MoveableRobot extends Robot {
         turningRight = false;
     }
 
+    protected Arena getArena(){
+        return this.arena;
+    }
+
+    // Method to update the robots state
+    public void update(){
+        // The robot needs to move forward
+        if(resumeMovement){
+            // Check for collisions
+            arena.checkCollision();
+            // Check for boundary collisions
+            arena.checkBoundaryCollision();
+            // Move the robot forward
+            moveForward();
+        }
+    }
+
+
+    /*
     // Method to update the robot's state
     public void update() {
         long currentTime = System.currentTimeMillis(); // Get the current time
@@ -98,6 +117,8 @@ public class MoveableRobot extends Robot {
         }
     }
 
+
+     */
     // Method to turn the robot left
     public void turnLeft() {
         this.setDirection(getDirection() - 10);
@@ -290,7 +311,7 @@ public class MoveableRobot extends Robot {
     }
 
     // Method to start the acceleration task
-    private void startAccelerationTask() {
+    public void startAccelerationTask() {
         scheduler = Executors.newScheduledThreadPool(1); // Create a new scheduled executor service
         scheduler.scheduleAtFixedRate(this::accelerate, 0, 1, TimeUnit.SECONDS); // Schedule the acceleration task
     }
@@ -301,22 +322,22 @@ public class MoveableRobot extends Robot {
         }
     }
 
-    private void stopAccelerationTask() {
+    public void stopAccelerationTask() {
         scheduler.shutdown(); // Shutdown the scheduler
     }
 
-    private void startDeccelerationTask() {
+    public void startDeccelerationTask() {
         scheduler = Executors.newScheduledThreadPool(1); // Create a new scheduled executor service
         scheduler.scheduleAtFixedRate(this::deccelerate, 0, 1, TimeUnit.SECONDS); // Schedule the deceleration task
     }
 
-    private void deccelerate() {
+    public void deccelerate() {
         if (getSpeed() > getMinSpeed()) { // If the speed is greater than the minimum speed
             this.setSpeed(getSpeed() - getAcceleration()); // Decrease the speed
         }
     }
 
-    private void stopDeccelerationTask() {
+    public void stopDeccelerationTask() {
         scheduler.shutdown(); // Shutdown the scheduler
     }
 
