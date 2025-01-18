@@ -60,65 +60,15 @@ public class MoveableRobot extends Robot {
         // The robot needs to move forward
         if(resumeMovement){
             // Check for collisions
-            arena.checkCollision();
-            // Check for boundary collisions
-            arena.checkBoundaryCollision();
+            Collision collision = new Collision(arena.getXSize(), arena.getYSize(), arena.getRobots(), arena.getObstacles());
+            collision.handleCollision(this);
             // Move the robot forward
             moveForward();
+            // Start the acceleration task
+            startAccelerationTask();
         }
     }
 
-
-    /*
-    // Method to update the robot's state
-    public void update() {
-        long currentTime = System.currentTimeMillis(); // Get the current time
-        if (turningLeft) { // If the robot is turning left
-            long elapsedTime = currentTime - turningStartTime; // Calculate elapsed time
-            if (elapsedTime >= turningDuration) { // If the turning duration is over
-                stopTurningLeft(); // Stop turning left
-            } else {
-                setDirection((getDirection() - (elapsedTime / 1000.0) * TURNING_SPEED) % 360); // Update direction
-                consecutiveTurns++;
-            }
-        }
-        if (turningRight) { // If the robot is turning right
-            long elapsedTime = currentTime - turningStartTime; // Calculate elapsed time
-            if (elapsedTime >= turningDuration) { // If the turning duration is over
-                stopTurningRight(); // Stop turning right
-            } else {
-                setDirection((getDirection() + (elapsedTime / 1000.0) * TURNING_SPEED) % 360); // Update direction
-                consecutiveTurns++;
-            }
-        }
-        // Check for excessive spinning
-        if (consecutiveTurns > MAX_CONSECUTIVE_TURNS) {
-            stuck = true;
-            stopAccelerationTask();
-            stopDeccelerationTask();
-            setSpeed(0);
-        }
-        // If stuck, slowly rotate until no obstacles are detected
-        if (stuck) {
-            if (!detectSensorDetectionWithObstacles() && !arena.detectRobotSensorDetection(this) && !arena.detectBoundarySensorDetection(this)) {
-                stuck = false;
-                consecutiveTurns = 0;
-                startAccelerationTask();
-            } else {
-                setDirection((getDirection() + 1) % 360); // Slowly rotate
-            }
-        } else {
-            // Check for collisions
-            arena.checkCollision();
-            // Check for boundary collisions
-            arena.checkBoundaryCollision();
-            moveForward(); // Move the robot forward
-            arena.checkBoundsAndSensorDetections(this); // Check bounds and collisions
-        }
-    }
-
-
-     */
     // Method to turn the robot left
     public void turnLeft() {
         this.setDirection(getDirection() - 10);
@@ -134,159 +84,6 @@ public class MoveableRobot extends Robot {
         double directionInRadians = Math.toRadians(getDirection()); // Convert direction to radians
         setXPos(getXPos() + (getSpeed() * Math.cos(directionInRadians))); // Update x position
         setYPos(getYPos() + (getSpeed() * Math.sin(directionInRadians))); // Update y position
-        arena.checkBoundsAndSensorDetections(this); // Check bounds and collisions
-    }
-
-    // Method to detect sensor with a point
-    public boolean detectSensorDetection(double x, double y) {
-        double direction = getDirection(); // Get the direction of the robot
-        double xPos = getXPos(); // Get the x position of the robot
-        double yPos = getYPos(); // Get the y position of the robot
-        double whiskerLength = Math.max(getXSize(), getYSize()) * 2; // Calculate whisker length
-
-        // Calculate left whisker position
-        double leftWhiskerX = xPos + whiskerLength * Math.cos(Math.toRadians(direction - 45));
-        double leftWhiskerY = yPos + whiskerLength * Math.sin(Math.toRadians(direction - 45));
-        // Calculate right whisker position
-        double rightWhiskerX = xPos + whiskerLength * Math.cos(Math.toRadians(direction + 45));
-        double rightWhiskerY = yPos + whiskerLength * Math.sin(Math.toRadians(direction + 45));
-
-        // Define whisker lines
-        Line2D leftWhisker = new Line2D.Double(xPos, yPos, leftWhiskerX, leftWhiskerY);
-        Line2D rightWhisker = new Line2D.Double(xPos, yPos, rightWhiskerX, rightWhiskerY);
-
-        // Check if the point intersects with either whisker
-        return leftWhisker.intersects(x - 2.5, y - 2.5, 5, 5) || rightWhisker.intersects(x - 2.5, y - 2.5, 5, 5);
-    }
-
-    // Method to check if a point is near a line
-    private boolean isPointNearLine(double x1, double y1, double x2, double y2, double px, double py) {
-        double distance = Math.abs((y2 - y1) * px - (x2 - x1) * py + x2 * y1 - y2 * x1) /
-                Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
-        return distance < 5; // Return true if the distance is less than 5
-    }
-
-    public boolean isSensorDetection(double x, double y) {
-        return detectSensorDetection(x, y);
-    }
-
-    // Method to correct the movement of the robot
-    public void correctMovement(boolean leftWhiskerDetected, boolean rightWhiskerDetected) {
-        // If both whiskers detect an obstacle, turn 180 degrees
-        if (leftWhiskerDetected && rightWhiskerDetected) {
-            // stop accelleration task
-            stopAccelerationTask();
-            // start deceleration task
-            startDeccelerationTask();
-            // turn left until no longer needed to turn left
-            turnLeft();
-            // set the left whisker detected to false
-            // set the right whisker detected to false
-            leftWhiskerDetected = false;
-            rightWhiskerDetected = false;
-            // print statement
-            System.out.println("Both Whiskers Detected");
-
-        } else if (leftWhiskerDetected) { // If only the left whisker detects an obstacle, turn right
-            // stop accelleration task
-            stopAccelerationTask();
-            // start deceleration task
-            startDeccelerationTask();
-            //turn right until no longer needed to turn right
-            turnRight();
-            // set the left whisker detected to false
-            leftWhiskerDetected = false;
-            // print statement
-            System.out.println("Left Whisker Detected");
-
-        } else if (rightWhiskerDetected) { // If only the right whisker detects an obstacle, turn left
-            // stop accelleration task
-            stopAccelerationTask();
-            // start deceleration task
-            startDeccelerationTask();
-            //turn left until no longer needed to turn left
-            turnLeft();
-            // set the right whisker detected to false
-            rightWhiskerDetected = false;
-            // print statement
-            System.out.println("Right Whisker Detected");
-        }
-
-        // Check if the whiskers are no longer detecting any obstacles
-        if (!detectSensorDetectionWithObstacles() && !arena.detectRobotSensorDetection(this) && !arena.detectBoundarySensorDetection(this)) {
-            // Resume movement
-            resumeMovement = true;
-            //stop deceleration task
-            stopDeccelerationTask();
-            //start acceleration task
-            startAccelerationTask();
-        }
-    }
-
-    // Method to detect collision with obstacles
-    private boolean detectSensorDetectionWithObstacles() {
-        if (arena.getObstacles() == null) { // If there are no obstacles
-            return false; // Return false
-        } else {
-            for (Obstacle obstacle : arena.getObstacles()) { // Iterate through obstacles
-                if (detectSensorDetection(obstacle.getXPos(), obstacle.getYPos())) { // If a collision is detected
-                    return true; // Return true
-                }
-            }
-            return false; // Return false if no collision is detected
-        }
-    }
-
-    // Method to detect collision with other robots
-    public boolean detectCollision(MoveableRobot otherRobot) {
-        double distance = Math.sqrt(Math.pow(otherRobot.getXPos() - this.getXPos(), 2) + Math.pow(otherRobot.getYPos() - this.getYPos(), 2 ));
-        return distance < (this.getXSize() + otherRobot.getXSize()) / 2;
-    }
-
-    // Method to handle collision with other robots
-    public void handleCollision(MoveableRobot otherRobot) {
-        currentTime = System.currentTimeMillis();
-        if (currentTime < collisionTimer) {
-            return;
-        } else {
-            collisionTimer = currentTime + COLLISION_DELAY;
-            double angle = Math.atan2(otherRobot.getYPos() - this.getYPos(), otherRobot.getXPos() - this.getXPos());
-            double newDirection = Math.toDegrees(angle) + 180;
-
-            // Add a small random factor to the direction to prevent robots getting stuck
-            newDirection += ThreadLocalRandom.current().nextDouble(-10, 10);
-
-            this.setDirection(newDirection);
-            this.setSpeed(this.getSpeed() * 0.5); // Reduce speed after collision
-        }
-    }
-
-    public void handleBoundaryCollision() {
-        handleOutofBounds();
-        // Timer for current time
-        long currentTime = System.currentTimeMillis();
-        // Check if the collision timer is less than the current time
-        if(currentTime < collisionTimer) {
-            return;
-        }else{
-            // Handle Collision
-            //stop accelleration task
-            stopAccelerationTask();
-            // start deceleration task
-            startDeccelerationTask();
-            double newDirection = this.getDirection() + 180;
-            this.setDirection(newDirection);
-            this.setSpeed(this.getSpeed() * 0.5); // Reduce speed after collision
-            //check if robot is still in bounds
-            if (!arena.detectBoundarySensorDetection(this)) {
-                // Resume movement
-                resumeMovement = true;
-                //stop deceleration task
-                stopDeccelerationTask();
-                //start acceleration task
-                startAccelerationTask();
-            }
-        }
     }
 
     // Method to handle if the robot is out of bounds

@@ -69,7 +69,14 @@ public class RobotEventHandler {
     }
     public void updateRobots(ArrayList<MoveableRobot> robots) {
         for (MoveableRobot robot : robots) {
-            robot.update();
+            if (robot instanceof SensorRobot) {
+                ((SensorRobot) robot).update();
+            } else if (robot instanceof BumperRobot) {
+                ((BumperRobot) robot).update();
+            } else{
+                robot.update();
+            }
         }
     }
 }
+

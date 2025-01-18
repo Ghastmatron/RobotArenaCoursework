@@ -1,16 +1,14 @@
 package com.example.robotarenacoursework;
 
-public class Obstacle {
+public abstract class Obstacle {
     private double xPos;
     private double yPos;
-    private String type;
     private double xSize;
     private double ySize;
 
-    public Obstacle(double xPos, double yPos, String type, double xSize, double ySize) {
+    public Obstacle(double xPos, double yPos, double xSize, double ySize) {
         this.xPos = xPos;
         this.yPos = yPos;
-        this.type = type;
         this.xSize = xSize;
         this.ySize = ySize;
     }
@@ -23,10 +21,6 @@ public class Obstacle {
         return yPos;
     }
 
-    public String getType() {
-        return type;
-    }
-
     public double getXSize() {
         return xSize;
     }
@@ -35,4 +29,5 @@ public class Obstacle {
         return ySize;
     }
 
+    public abstract void handleCollision(MoveableRobot robot);
 }

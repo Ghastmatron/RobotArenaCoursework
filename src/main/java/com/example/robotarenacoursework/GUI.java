@@ -30,6 +30,7 @@ public class GUI extends Application {
             // Create the arena, robots, and obstacles
             arena = new Arena(500, 500, robots, null);
 
+
             /*
             // Create robots
             robots.add(new MoveableRobot("Robot1", 0.2, 20, 30, 3, 0, arena, 5, 5));

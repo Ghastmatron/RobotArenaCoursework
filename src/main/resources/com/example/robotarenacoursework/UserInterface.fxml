@@ -34,6 +34,7 @@
             <VBox spacing="10" alignment="TOP_CENTER" style="-fx-padding: 10;">
                 <Button text="Add Robot" onAction="#handleAddRobot"/>
                 <Button text="Remove Robot" onAction="#handleRemoveRobot"/>
+                <Button text="Add Obstacle" onAction="#handleAddObstacle"/>
                 <Button text="Create New Arena" onAction="#handleCreateNewArena"/>
                 <!-- Add more buttons as needed -->
             </VBox>

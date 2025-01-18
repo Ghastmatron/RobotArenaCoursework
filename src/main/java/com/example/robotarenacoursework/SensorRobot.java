@@ -82,30 +82,35 @@ class SensorRobot extends MoveableRobot {
                 }
             }
         }
-
         // Correct the robot's direction if a whisker is detected
-        this.correctMovement();
+        if(this.leftWhiskerDetected || this.rightWhiskerDetected){
+            this.correctMovement();
+        }else{
+            startAccelerationTask();
+        }
     }
 
     public void correctMovement(){
+        System.out.println("Correcting movement");
         if(this.leftWhiskerDetected && this.rightWhiskerDetected){
+            System.out.println("Both whiskers detected");
             // Start decelerating
             this.startDeccelerationTask();
             // Start turning
-            this.startTurningLeft(100);
+            this.turnLeft();
         } else if(this.leftWhiskerDetected){
+            System.out.println("Left whisker detected");
             // Start decelerating
             this.startDeccelerationTask();
             // Start turning
-            this.startTurningRight(100);
+            this.turnRight();
         } else if(this.rightWhiskerDetected){
+            System.out.println("Right whisker detected");
             // Start decelerating
             this.startDeccelerationTask();
             // Start turning
-            this.startTurningLeft(100);
+            this.turnLeft();
         }
-        // Start accelerating
-        this.startAccelerationTask();
         // Set whiskers to false
         this.leftWhiskerDetected = false;
         this.rightWhiskerDetected = false;

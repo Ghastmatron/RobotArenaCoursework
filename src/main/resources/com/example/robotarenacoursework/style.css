@@ -6,3 +6,20 @@
     -fx-border-color: black;
     -fx-border-width: 2px;
 }
+
+.bounce-obstacle{
+    -fx-background-color: red;
+}
+
+.slow-obstacle{
+    -fx-background-color: orange;
+}
+
+.speed-obstacle{
+    -fx-background-color: green;
+}
+
+.teleport-obstacle{
+    -fx-background-color: purple;
+}
+
