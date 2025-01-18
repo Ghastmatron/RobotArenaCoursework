@@ -8,6 +8,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Slider;
 
 import java.util.Optional;
 import java.util.Random;
@@ -17,6 +18,12 @@ import java.util.List;
 public class UserInterfaceController {
     @FXML
     private Canvas canvas;
+    @FXML
+    private Slider maxSpeedSlider;
+    @FXML
+    private Slider minSpeedSlider;
+    @FXML
+    private Slider accelerationSlider;
 
     private Arena arena;
     private ArrayList<MoveableRobot> robots = new ArrayList<>();
@@ -35,6 +42,7 @@ public class UserInterfaceController {
     // Setter for the robots
     public void setRobots(ArrayList<MoveableRobot> robots) {
         this.robots = robots;
+        intialiseSliders();
     }
 
     // Setter for the obstacles
@@ -243,6 +251,34 @@ public class UserInterfaceController {
         arena.setObstacles(obstacles);
     }
 
+    private void handleRemoveObstacle() {
+        if (!obstacles.isEmpty()) {
+            obstacles.remove(obstacles.size() - 1);
+            arena.setObstacles(obstacles);
+        } else {
+            showAlert("Remove Obstacle", "No obstacles to remove.");
+        }
+    }
+
+    private void intialiseSliders(){
+        maxSpeedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            for (MoveableRobot robot : robots) {
+                robot.setMaxSpeed(newValue.doubleValue());
+            }
+        });
+
+        minSpeedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            for (MoveableRobot robot : robots) {
+                robot.setMinSpeed(newValue.doubleValue());
+            }
+        });
+
+        accelerationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            for (MoveableRobot robot : robots) {
+                robot.setAcceleration(newValue.doubleValue());
+            }
+        });
+    }
 
 
     // Method to show an alert with a given title and message

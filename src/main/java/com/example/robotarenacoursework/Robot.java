@@ -1,7 +1,7 @@
 package com.example.robotarenacoursework;
 
 public class Robot {
-    private final double MaxSpeed;
+    private double MaxSpeed;
     private String name;
     private double speed;
     private double MinSpeed;
@@ -86,4 +86,15 @@ public class Robot {
         return this.speed = speed;
     }
 
+    public void setMaxSpeed(double MaxSpeed) {
+        this.MaxSpeed = MaxSpeed;
+    }
+
+    public void setMinSpeed(double MinSpeed) {
+        this.MinSpeed = MinSpeed;
+    }
+
+    public void setAcceleration(double Acceleration) {
+        this.Accelleration = Acceleration;
+    }
 }

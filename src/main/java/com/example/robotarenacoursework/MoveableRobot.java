@@ -66,6 +66,8 @@ public class MoveableRobot extends Robot {
             moveForward();
             // Start the acceleration task
             startAccelerationTask();
+            // Stop the deceleration task
+            stopDeccelerationTask();
         }
     }
 
