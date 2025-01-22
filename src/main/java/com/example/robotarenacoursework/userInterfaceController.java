@@ -1,14 +1,16 @@
-// UserInterfaceController.java
 package com.example.robotarenacoursework;
 
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.util.Optional;
 import java.util.Random;
@@ -16,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserInterfaceController {
+    private CustomCanvas customCanvas;
+    private GUI gui;
+
     @FXML
     private Canvas canvas;
     @FXML
@@ -23,7 +28,9 @@ public class UserInterfaceController {
     @FXML
     private Slider minSpeedSlider;
     @FXML
-    private Slider accelerationSlider;
+    private TextField xSizeField;
+    @FXML
+    private TextField ySizeField;
 
     private Arena arena;
     private ArrayList<MoveableRobot> robots = new ArrayList<>();
@@ -48,6 +55,11 @@ public class UserInterfaceController {
     // Setter for the obstacles
     public void setObstacles(ArrayList<Obstacle> obstacles) {
         this.obstacles = obstacles;
+    }
+
+    // Setter for the GUI
+    public void setGUI(GUI gui) {
+        this.gui = gui;
     }
 
     // Method to handle adding a robot
@@ -155,11 +167,32 @@ public class UserInterfaceController {
     // Method to handle creating a new arena
     @FXML
     private void handleCreateNewArena() {
-        // Logic to create a new arena
-        arena = new Arena(100, 100, null, null); // Increase the size of the arena
-        robots.clear();
-        arena.setRobots(robots);
-        showAlert("Create New Arena", "New arena created.");
+        try {
+            int xSize = Integer.parseInt(xSizeField.getText());
+            int ySize = Integer.parseInt(ySizeField.getText());
+
+            if (xSize < 100 || xSize > 1000 || ySize < 100 || ySize > 800) {
+                System.out.println("Invalid dimensions. X must be between 100 and 1000, and Y must be between 100 and 800.");
+                return;
+            }
+
+            Arena arena = new Arena(xSize, ySize, robots, null);
+            gui.setArena(arena); // Set the arena in the GUI class
+            System.out.println("New arena created with dimensions: " + xSize + "x" + ySize);
+
+            int maxWidth = 1000;
+            int maxHeight = 800;
+            canvas.setWidth(maxWidth);
+            canvas.setHeight(maxHeight);
+            Stage stage = (Stage) canvas.getScene().getWindow();
+            stage.setWidth(maxWidth + 200);
+            stage.setHeight(maxHeight + 100);
+
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            gui.getCustomCanvas().draw(gc); // Ensure draw method is called
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter valid numbers for the dimensions.");
+        }
     }
 
     //Method to handle adding an obstacle
@@ -207,26 +240,50 @@ public class UserInterfaceController {
         Random random = new Random();
         int xPos = random.nextInt(arena.getXSize());
         int yPos = random.nextInt(arena.getYSize());
-        addObstacle(obstacleType, xPos, yPos);
+        double width = 10 + random.nextDouble() * 40; // Random width between 10 and 50
+        double height = 10 + random.nextDouble() * 40; // Random height between 10 and 50
+        addObstacle(obstacleType, xPos, yPos, width, height);
     }
 
-    // Method to add an obstacle at a specified position
+
     private void addObstacleSpecifiedPosition(String obstacleType) {
         // Create a text input dialog to get the specified position
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Specified Position");
-        dialog.setHeaderText("Enter X and Y positions separated by a comma");
-        dialog.setContentText("Position:");
+        TextInputDialog positionDialog = new TextInputDialog();
+        positionDialog.setTitle("Specified Position");
+        positionDialog.setHeaderText("Enter X and Y positions separated by a comma");
+        positionDialog.setContentText("Position:");
 
         // Show the dialog and wait for user input
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            String[] positions = result.get().split(",");
+        Optional<String> positionResult = positionDialog.showAndWait();
+        if (positionResult.isPresent()) {
+            String[] positions = positionResult.get().split(",");
             if (positions.length == 2) {
                 try {
                     int xPos = Integer.parseInt(positions[0].trim());
                     int yPos = Integer.parseInt(positions[1].trim());
-                    addObstacle(obstacleType, xPos, yPos);
+
+                    // Create a text input dialog to get the specified size
+                    TextInputDialog sizeDialog = new TextInputDialog();
+                    sizeDialog.setTitle("Specified Size");
+                    sizeDialog.setHeaderText("Enter width and height separated by a comma");
+                    sizeDialog.setContentText("Size:");
+
+                    // Show the dialog and wait for user input
+                    Optional<String> sizeResult = sizeDialog.showAndWait();
+                    if (sizeResult.isPresent()) {
+                        String[] sizes = sizeResult.get().split(",");
+                        if (sizes.length == 2) {
+                            try {
+                                double width = Double.parseDouble(sizes[0].trim());
+                                double height = Double.parseDouble(sizes[1].trim());
+                                addObstacle(obstacleType, xPos, yPos, width, height);
+                            } catch (NumberFormatException e) {
+                                showAlert("Invalid Input", "Please enter valid double values for size.");
+                            }
+                        } else {
+                            showAlert("Invalid Input", "Please enter two size values separated by a comma.");
+                        }
+                    }
                 } catch (NumberFormatException e) {
                     showAlert("Invalid Input", "Please enter valid integer positions.");
                 }
@@ -236,16 +293,16 @@ public class UserInterfaceController {
         }
     }
 
-    private void addObstacle(String obstacletype, int xPos, int yPos){
+    private void addObstacle(String obstacleType, int xPos, int yPos, double width, double height) {
         Obstacle obstacle;
-        if(obstacletype.equals("Rock")) {
-            obstacle = new BounceObstacle(xPos, yPos, 5, 5);
-        }else if(obstacletype.equals("Sand")) {
-            obstacle = new SlowObstacle(xPos, yPos, 5, 5);
-        }else if(obstacletype.equals("Speed")) {
-            obstacle = new SpeedObstacle(xPos, yPos, 5, 5);
-        }else {
-            obstacle = new TeleportObstacle(xPos, yPos, 5, 5, arena);
+        if (obstacleType.equals("Rock")) {
+            obstacle = new BounceObstacle(xPos, yPos, width, height);
+        } else if (obstacleType.equals("Sand")) {
+            obstacle = new SlowObstacle(xPos, yPos, width, height);
+        } else if (obstacleType.equals("Speed")) {
+            obstacle = new SpeedObstacle(xPos, yPos, width, height);
+        } else {
+            obstacle = new TeleportObstacle(xPos, yPos, width, height, arena);
         }
         obstacles.add(obstacle);
         arena.setObstacles(obstacles);
@@ -270,12 +327,6 @@ public class UserInterfaceController {
         minSpeedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             for (MoveableRobot robot : robots) {
                 robot.setMinSpeed(newValue.doubleValue());
-            }
-        });
-
-        accelerationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            for (MoveableRobot robot : robots) {
-                robot.setAcceleration(newValue.doubleValue());
             }
         });
     }

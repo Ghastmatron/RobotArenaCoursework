@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 
-<?import javafx.scene.control.Label?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.robotarenacoursework.UserInterfaceController"
+            fx:controller="com.example.robotarenacoursework.userInterfaceController"
             prefHeight="600.0" prefWidth="800.0">
     <VBox>
         <MenuBar>
@@ -38,14 +38,13 @@
                 <Button text="Add Robot" onAction="#handleAddRobot"/>
                 <Button text="Remove Robot" onAction="#handleRemoveRobot"/>
                 <Button text="Add Obstacle" onAction="#handleAddObstacle"/>
+                <TextField fx:id="xSizeField" promptText="Enter X size"/>
+                <TextField fx:id="ySizeField" promptText="Enter Y size"/>
                 <Button text="Create New Arena" onAction="#handleCreateNewArena"/>
-                <!-- Add more buttons as needed -->
                 <Label text="Max Speed"/>
                 <Slider fx:id="maxSpeedSlider" min="0" max="20" value="5"/>
                 <Label text="Min Speed"/>
                 <Slider fx:id="minSpeedSlider" min="0" max="20" value="1"/>
-                <Label text="Acceleration"/>
-                <Slider fx:id="accelerationSlider" min="1" max="3" value="1"/>
             </VBox>
         </HBox>
     </VBox>

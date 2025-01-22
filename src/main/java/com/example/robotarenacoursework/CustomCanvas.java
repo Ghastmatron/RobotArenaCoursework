@@ -14,6 +14,7 @@ public class CustomCanvas {
     public void draw(GraphicsContext gc) {
         // Draw arena, obstacles, and robots
         drawArena(gc);
+        drawBoundary(gc);
         drawObstacles(gc);
         drawRobots(gc);
     }
@@ -22,6 +23,26 @@ public class CustomCanvas {
         // Draw the arena boundaries
         gc.setStroke(Color.BLACK);
         gc.strokeRect(0, 0, arena.getXSize(), arena.getYSize());
+    }
+
+    public void drawBoundary(GraphicsContext gc) {
+        int maxWidth = 1000;
+        int maxHeight = 800;
+
+        clearBoundary(gc);
+
+        int xOffset = (maxWidth - arena.getXSize()) / 2;
+        int yOffset = (maxHeight - arena.getYSize()) / 2;
+
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(2);
+        gc.strokeRect(xOffset, yOffset, arena.getXSize(), arena.getYSize());
+    }
+
+    public void clearBoundary(GraphicsContext gc) {
+        int maxWidth = 1000;
+        int maxHeight = 800;
+        gc.clearRect(0, 0, maxWidth, maxHeight);
     }
 
     private void drawObstacles(GraphicsContext gc) {
@@ -70,16 +91,39 @@ public class CustomCanvas {
                 drawSensorRobot(gc, (SensorRobot) robot);
             } else if (robot instanceof BumperRobot) {
                 drawBumperRobot(gc, (BumperRobot) robot);
-            }else{
+            } else {
                 drawMoveableRobot(gc, robot);
             }
         }
     }
-
     private void drawMoveableRobot(GraphicsContext gc, MoveableRobot robot) {
-        // Draw the robot body
+        // Save the current state of the GraphicsContext
+        gc.save();
+
+        // Translate to the center of the robot
+        double centerX = robot.getXPos() + robot.getXSize() / 2;
+        double centerY = robot.getYPos() + robot.getYSize() / 2;
+        gc.translate(centerX, centerY);
+
+        // Rotate the GraphicsContext
+        gc.rotate(robot.getDirection());
+
+        // Translate back and draw the robot
+        gc.translate(-centerX, -centerY);
         gc.setFill(Color.BLUE);
         gc.fillRect(robot.getXPos(), robot.getYPos(), robot.getXSize(), robot.getYSize());
+
+        // Draw the wheels as rectangles
+        gc.setFill(Color.DARKGRAY);
+        double wheelWidth = robot.getXSize() / 4;
+        double wheelHeight = robot.getYSize() / 2;
+        // Draw the left wheel
+        gc.fillRect(robot.getXPos() - wheelWidth, robot.getYPos() + (robot.getYSize() - wheelHeight) / 2, wheelWidth, wheelHeight);
+        // Draw the right wheel
+        gc.fillRect(robot.getXPos() + robot.getXSize(), robot.getYPos() + (robot.getYSize() - wheelHeight) / 2, wheelWidth, wheelHeight);
+
+        // Restore the GraphicsContext state
+        gc.restore();
     }
 
 

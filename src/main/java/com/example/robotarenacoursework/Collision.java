@@ -64,11 +64,13 @@ public class Collision extends Arena {
                 // Handle the collision
                 // Call robot to start decelerating
                 robot.startDeccelerationTask();
-                // Make the obstace handle the collision
+                // Make the obstacle handle the collision
                 obstacle.handleCollision(robot);
+                // Rotate the robot
+                robot.setDirection(robot.getDirection() + 180 + Math.random() * 20 - 10);
             }
         }
-        // check if the robot is colliding with other robots
+        // Check if the robot is colliding with other robots
         for (MoveableRobot otherRobot : robots) {
             if (robot != otherRobot) {
                 if (checkRobotCollision(robot, otherRobot)) {
@@ -76,7 +78,7 @@ public class Collision extends Arena {
                     // Call robot to start decelerating
                     robot.startDeccelerationTask();
                     // Make robot bounce off target robot by turning 180 degrees, plus or minus 10 randomly
-                    robot.setDirection(robot.getDirection() + 90 + Math.random() * 20 - 10);
+                    robot.setDirection(robot.getDirection() + 180 + Math.random() * 20 - 10);
                 }
             }
         }
