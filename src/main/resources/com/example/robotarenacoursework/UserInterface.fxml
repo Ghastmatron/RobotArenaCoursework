@@ -14,33 +14,37 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.robotarenacoursework.userInterfaceController"
+            fx:controller="com.example.robotarenacoursework.UserInterfaceController"
             prefHeight="600.0" prefWidth="800.0">
     <VBox>
         <MenuBar>
             <Menu text="File">
-                <MenuItem text="New"/>
-                <MenuItem text="Open"/>
-                <MenuItem text="Save"/>
-                <MenuItem text="Exit"/>
+                <MenuItem text="New" onAction="#handleCreateNewArena"/>
+                <MenuItem text="Open" onAction="#handleOpenArena"/>
+                <MenuItem text="Save" onAction="#handleSaveArena"/>
+                <MenuItem text="Exit" onAction="#handleExit"/>
             </Menu>
             <Menu text="Edit">
                 <MenuItem text="Undo"/>
                 <MenuItem text="Redo"/>
             </Menu>
             <Menu text="Help">
-                <MenuItem text="About"/>
+                <MenuItem text="About" onAction="#showAbout"/>
+                <MenuItem text="Help" onAction="#showHelp"/>
             </Menu>
         </MenuBar>
         <HBox>
             <Canvas fx:id="canvas" width="600.0" height="600.0"/>
             <VBox spacing="10" alignment="TOP_CENTER" style="-fx-padding: 10;">
                 <Button text="Add Robot" onAction="#handleAddRobot"/>
-                <Button text="Remove Robot" onAction="#handleRemoveRobot"/>
+                <Button text="Delete Selected" onAction="#handleDeleteSelected"/>
                 <Button text="Add Obstacle" onAction="#handleAddObstacle"/>
                 <TextField fx:id="xSizeField" promptText="Enter X size"/>
                 <TextField fx:id="ySizeField" promptText="Enter Y size"/>
                 <Button text="Create New Arena" onAction="#handleCreateNewArena"/>
+                <Button text="Default Arena" onAction="#handleDefaultArena"/>
+                <Button text="Start Simulation" onAction="#handleStart"/>
+                <Button text="Stop Simulation" onAction="#handleStop"/>
                 <Label text="Max Speed"/>
                 <Slider fx:id="maxSpeedSlider" min="0" max="20" value="5"/>
                 <Label text="Min Speed"/>

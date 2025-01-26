@@ -11,6 +11,11 @@ public class TeleportObstacle extends Obstacle {
         this.arena = arena;
     }
 
+    // Return the type of the obstacle
+    public String getType() {
+        return "TeleportObstacle";
+    }
+
     @Override
     public void handleCollision(MoveableRobot robot) {
         Random random = new Random();

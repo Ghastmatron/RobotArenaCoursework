@@ -6,6 +6,11 @@ public class SpeedObstacle extends Obstacle {
         super(xPos, yPos, xSize, ySize);
     }
 
+    // Return the type of the obstacle
+    public String getType() {
+        return "SpeedObstacle";
+    }
+
     @Override
     public void handleCollision(MoveableRobot robot) {
         robot.setSpeed(robot.getSpeed() * 1.5);

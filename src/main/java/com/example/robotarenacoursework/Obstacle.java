@@ -29,5 +29,18 @@ public abstract class Obstacle {
         return ySize;
     }
 
+    public abstract String getType();
+
+    public void setPosition(double x, double y) {
+        this.xPos = x;
+        this.yPos = y;
+    }
+
+    // Method to check if a point is within the obstacle
+    public boolean contains(double x, double y) {
+        return x >= xPos && x <= xPos + xSize && y >= yPos && y <= yPos + ySize;
+    }
+
+    // Method to handle collision with a robot
     public abstract void handleCollision(MoveableRobot robot);
 }

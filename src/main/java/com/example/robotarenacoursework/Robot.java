@@ -97,4 +97,21 @@ public class Robot {
     public void setAcceleration(double Acceleration) {
         this.Accelleration = Acceleration;
     }
+
+    public void setPosition(double x, double y){
+        this.XPosition = x;
+        this.YPosition = y;
+    }
+
+    public void setXSize(double xSize) {
+        this.xSize = xSize;
+    }
+
+    public void setYSize(double ySize) {
+        this.ySize = ySize;
+    }
+
+    public boolean contains(double x, double y) {
+        return x >= XPosition && x <= XPosition + xSize && y >= YPosition && y <= YPosition + ySize;
+    }
 }

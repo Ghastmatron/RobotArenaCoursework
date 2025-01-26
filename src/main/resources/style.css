@@ -1,0 +1,52 @@
+/* styles.css */
+.root {
+    -fx-background-color: #e0f7fa;
+}
+
+.canvas {
+    -fx-border-color: #00796b;
+    -fx-border-width: 2px;
+    -fx-background-color: #ffffff;
+}
+
+.bounce-obstacle {
+    -fx-background-color: #ff5252;
+}
+
+.slow-obstacle {
+    -fx-background-color: #ffab40;
+}
+
+.speed-obstacle {
+    -fx-background-color: #69f0ae;
+}
+
+.teleport-obstacle {
+    -fx-background-color: #7c4dff;
+}
+
+.info-panel {
+    -fx-background-color: #f0f0f0;
+    -fx-padding: 10px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.info-panel .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.button {
+    -fx-background-color: #00796b;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: #004d40;
+}
