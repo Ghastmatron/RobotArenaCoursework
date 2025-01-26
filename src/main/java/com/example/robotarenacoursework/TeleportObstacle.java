@@ -3,6 +3,12 @@ package com.example.robotarenacoursework;
 
 import java.util.Random;
 
+/*
+ * This class is used to create a TeleportObstacle object
+ * It extends the Obstacle class and overrides the handleCollision method
+ * It is used to handle collisions between the robot and the TeleportObstacle
+ */
+
 public class TeleportObstacle extends Obstacle {
     private Arena arena;
 

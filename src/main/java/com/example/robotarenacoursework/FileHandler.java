@@ -90,11 +90,11 @@ public class FileHandler {
     // Method to create an obstacle based on its type
     private static Obstacle createObstacle(String type, double x, double y, double width, double height, Arena arena) {
         switch (type) {
-            case "Rock":
+            case "BounceObstacle":
                 return new BounceObstacle(x, y, width, height);
-            case "Sand":
+            case "SlowObstacle":
                 return new SlowObstacle(x, y, width, height);
-            case "Speed":
+            case "SpeedObstacle":
                 return new SpeedObstacle(x, y, width, height);
             default:
                 return new TeleportObstacle(x, y, width, height, arena);

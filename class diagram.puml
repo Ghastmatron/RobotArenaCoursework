@@ -1,0 +1,271 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' Define classes
+class Robot {
+  - String name
+  - double speed
+  - double maxSpeed
+  - double minSpeed
+  - double acceleration
+  - double xPos
+  - double yPos
+  - double xSize
+  - double ySize
+  - double direction
+  + getName()
+  + getSpeed()
+  + getMaxSpeed()
+  + getMinSpeed()
+  + getAcceleration()
+  + getXPos()
+  + getYPos()
+  + getXSize()
+  + getYSize()
+  + getDirection()
+  + setSpeed(double speed)
+  + setDirection(double direction)
+  + setPosition(double x, double y)
+  + contains(double x, double y)
+}
+
+class MoveableRobot {
+  - Arena arena
+  - boolean turningLeft
+  - boolean turningRight
+  - long turningStartTime
+  - long turningDuration
+  - static final double TURNING_SPEED
+  - boolean resumeMovement
+  - ScheduledExecutorService scheduler
+  - long collisionTimer
+  - long currentTime
+  - static final long COLLISION_DELAY
+  - int consecutiveTurns
+  - static final int MAX_CONSECUTIVE_TURNS
+  - boolean stuck
+  + startTurningLeft(long duration)
+  + stopTurningLeft()
+  + startTurningRight(long duration)
+  + stopTurningRight()
+  + update()
+  + turnLeft()
+  + turnRight()
+  + moveForward()
+  + handleOutofBounds()
+  + startAccelerationTask()
+  + stopAccelerationTask()
+  + startDeccelerationTask()
+  + stopDeccelerationTask()
+}
+
+class Arena {
+  - int xSize
+  - int ySize
+  - ArrayList<MoveableRobot> robots
+  - ArrayList<Obstacle> obstacles
+  + getXSize()
+  + getYSize()
+  + getRobots()
+  + getObstacles()
+  + setRobots(ArrayList<MoveableRobot> robots)
+  + setObstacles(ArrayList<Obstacle> obstacles)
+  + addRobot(MoveableRobot robot)
+  + removeRobot(MoveableRobot robot)
+  + handleMousePressed(MouseEvent event, UserInterfaceController controller)
+  + handleMouseDragged(MouseEvent event, UserInterfaceController controller)
+  + handleMouseReleased(MouseEvent event, UserInterfaceController controller)
+  + deleteSelected()
+  + initializeDefaultArena()
+}
+
+class Obstacle {
+  - double xPos
+  - double yPos
+  - double xSize
+  - double ySize
+  + getXPos()
+  + getYPos()
+  + getXSize()
+  + getYSize()
+  + setPosition(double xPos, double yPos)
+  + contains(double x, double y)
+  + handleCollision(MoveableRobot robot)
+}
+
+class BounceObstacle {
+  + BounceObstacle(double xPos, double yPos, double xSize, double ySize)
+  + getType()
+  + handleCollision(MoveableRobot robot)
+}
+
+class SlowObstacle {
+  + SlowObstacle(double xPos, double yPos, double xSize, double ySize)
+  + getType()
+  + handleCollision(MoveableRobot robot)
+}
+
+class SpeedObstacle {
+  + SpeedObstacle(double xPos, double yPos, double xSize, double ySize)
+  + getType()
+  + handleCollision(MoveableRobot robot)
+}
+
+class TeleportObstacle {
+  + TeleportObstacle(double xPos, double yPos, double xSize, double ySize, Arena arena)
+  + getType()
+  + handleCollision(MoveableRobot robot)
+}
+
+class BumperRobot {
+  + BumperRobot(String name, double speed, double maxSpeed, double minSpeed, double acceleration, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize, double ringRadius)
+  + getRingRadius()
+  + update()
+}
+
+class BeamRobot {
+  + BeamRobot(String name, double speed, double maxSpeed, double minSpeed, double acceleration, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize, double beamLength)
+  + collidesWith(MoveableRobot robot)
+  + drawBeam(GraphicsContext gc)
+  + update()
+}
+
+class FastRobot {
+  + FastRobot(String name, double speed, double maxSpeed, double minSpeed, double acceleration, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize)
+  + getFlameRadius()
+  + update()
+}
+
+class HeavyRobot {
+  + HeavyRobot(String name, double speed, double maxSpeed, double minSpeed, double acceleration, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize)
+  + getWeight()
+  + update()
+}
+
+class Collision {
+  + Collision(int xSize, int ySize, ArrayList<MoveableRobot> robots, ArrayList<Obstacle> obstacles)
+  + checkObstacleCollision(MoveableRobot robot, Obstacle obstacle)
+  + checkRobotCollision(MoveableRobot robot, MoveableRobot otherRobot)
+  + checkBoundaryCollision(MoveableRobot robot)
+  + handleCollision(MoveableRobot robot)
+}
+
+class FileHandler {
+  + saveArena(Arena arena, String filePath)
+  + loadArena(String filePath)
+  + createRobot(String type, double x, double y, Arena arena)
+  + createObstacle(String type, double x, double y, double width, double height, Arena arena)
+}
+
+class CustomCanvas {
+  + CustomCanvas(Arena arena)
+  + getCanvas()
+  + setArena(Arena arena)
+  + draw(GraphicsContext gc)
+  + drawArena(GraphicsContext gc)
+  + drawObstacles(GraphicsContext gc)
+  + drawSlowObstacle(GraphicsContext gc, SlowObstacle obstacle)
+  + drawTeleportObstacle(GraphicsContext gc, TeleportObstacle obstacle)
+  + drawSpeedObstacle(GraphicsContext gc, SpeedObstacle obstacle)
+  + drawBounceObstacle(GraphicsContext gc, BounceObstacle obstacle)
+  + drawRobots(GraphicsContext gc)
+  + drawMoveableRobot(GraphicsContext gc, MoveableRobot robot)
+  + drawSensorRobot(GraphicsContext gc, SensorRobot robot)
+  + drawBumperRobot(GraphicsContext gc, BumperRobot robot)
+  + drawBeamRobot(GraphicsContext gc, BeamRobot robot)
+  + drawFastRobot(GraphicsContext gc, FastRobot robot)
+  + drawHeavyRobot(GraphicsContext gc, HeavyRobot robot)
+}
+
+class RobotEventHandler {
+  + addEventHandlers(Scene scene, ArrayList<MoveableRobot> robots)
+  + checkCollisions(BeamRobot beamRobot, ArrayList<MoveableRobot> robots)
+  + updateRobots(ArrayList<MoveableRobot> robots)
+}
+
+class SensorRobot {
+  + SensorRobot(String name, double speed, double maxSpeed, double minSpeed, double acceleration, double xPos, double yPos, int sensors, double direction, Arena arena, double xSize, double ySize)
+  + getWhiskerLength()
+  + getLeftWhiskerX()
+  + getLeftWhiskerY()
+  + getRightWhiskerX()
+  + getRightWhiskerY()
+  + checkSensors()
+  + correctMovement()
+  + update()
+}
+
+class UserInterfaceController {
+  + getCanvas()
+  + setArena(Arena arena)
+  + setRobots(ArrayList<MoveableRobot> robots)
+  + setObstacles(ArrayList<Obstacle> obstacles)
+  + setGUI(GUI gui)
+  + isRunning()
+  + handleAddRobot()
+  + addRobotRandomPosition(String robotType)
+  + addRobotSpecifiedPosition(String robotType)
+  + addRobot(String robotType, int xPos, int yPos)
+  + handleRemoveRobot()
+  + handleCreateNewArena()
+  + handleAddObstacle()
+  + addObstacleRandomPosition(String obstacleType)
+  + addObstacleSpecifiedPosition(String obstacleType)
+  + addObstacle(String obstacleType, int xPos, int yPos, double width, double height)
+  + handleRemoveObstacle()
+  + intialiseSliders()
+  + showAlert(String title, String message)
+  + showTextDialog(String title, String message)
+  + handleOpenArena()
+  + handleSaveArena()
+  + handleExit()
+  + handleStart()
+  + handleStop()
+  + handleMousePressed(MouseEvent event)
+  + handleMouseDragged(MouseEvent event)
+  + handleMouseReleased(MouseEvent event)
+  + redrawCanvas()
+  + handleDeleteSelected()
+  + showAbout()
+  + showHelp()
+  + handleDefaultArena()
+}
+
+class GUI {
+  + start(Stage primaryStage)
+  + setArena(Arena arena)
+  + setRobots(ArrayList<MoveableRobot> robots)
+  + getCustomCanvas()
+  + createDefaultArena()
+  + main(String[] args)
+}
+
+class InfoPanel {
+  + InfoPanel()
+  + updateInfo(Arena arena)
+}
+
+' Define relationships
+Robot <|-- MoveableRobot
+Arena "1" *-- "many" MoveableRobot
+Arena "1" *-- "many" Obstacle
+Obstacle <|-- BounceObstacle
+Obstacle <|-- SlowObstacle
+Obstacle <|-- SpeedObstacle
+Obstacle <|-- TeleportObstacle
+MoveableRobot <|-- BumperRobot
+MoveableRobot <|-- BeamRobot
+MoveableRobot <|-- FastRobot
+MoveableRobot <|-- HeavyRobot
+MoveableRobot <|-- SensorRobot
+Arena "1" *-- "1" CustomCanvas
+Arena "1" *-- "1" InfoPanel
+Arena "1" *-- "1" UserInterfaceController
+UserInterfaceController "1" *-- "1" GUI
+CustomCanvas "1" *-- "1" GUI
+RobotEventHandler "1" *-- "many" MoveableRobot
+Collision "1" *-- "many" MoveableRobot
+Collision "1" *-- "many" Obstacle
+FileHandler "1" *-- "1" Arena
+
+@enduml

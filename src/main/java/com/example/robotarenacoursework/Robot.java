@@ -58,10 +58,6 @@ public class Robot {
         return direction;
     }
 
-    public int getSensors() {
-        return sensors;
-    }
-
     public double getXSize() {
         return xSize;
     }

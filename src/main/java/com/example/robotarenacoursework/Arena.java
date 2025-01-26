@@ -64,6 +64,10 @@ public class Arena {
         double x = event.getX(); // Get the x position of the mouse
         double y = event.getY(); // Get the y position of the mouse
 
+        //Set Selected robot or obstacle to false
+        selectedRobot = null;
+        selectedObstacle = null;
+
         for (MoveableRobot robot : robots) {
             if (robot.contains(x, y)) { // If the robot contains the mouse position
                 selectedRobot = robot; // Set the selected robot to the robot

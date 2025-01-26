@@ -1,5 +1,10 @@
 package com.example.robotarenacoursework;
 
+/*
+ * This class is used to handle events for the robot controls
+ * It is used to add event handlers for robot controls and update the state of all robots
+ * It also checks for collisions between the BeamRobot and other robots
+ */
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;

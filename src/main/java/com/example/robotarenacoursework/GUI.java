@@ -1,5 +1,10 @@
 package com.example.robotarenacoursework;
 
+/*
+    * This class is used to create the GUI for the Robot Arena
+    * It extends the Application class
+ */
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +43,7 @@ public class GUI extends Application {
 
             customCanvas = new CustomCanvas(null); // Create a new CustomCanvas instance
             infoPanel = new InfoPanel(); // Create a new InfoPanel instance
+            infoPanel.setPrefWidth(400); // Set the preferred width of the info panel
 
             // Create an HBox to hold the canvas and the info root
             HBox hbox = new HBox(); // Create a new HBox

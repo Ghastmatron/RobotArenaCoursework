@@ -1,5 +1,17 @@
 package com.example.robotarenacoursework;
 
+/*
+    * This class is used to create a UserInterfaceController object
+    * It is used to handle the user interface of the application
+    * It is used to handle user input and events
+    * It is used to interact with the GUI and Arena classes
+    * It is used to create and manage robots and obstacles
+    * It is used to save and load arenas
+    * It is used to start and stop the simulation
+    * It is used to show alerts and dialogs
+    * It is used to show the about and help dialogs
+ */
+
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -499,7 +511,8 @@ public class UserInterfaceController {
         String aboutText = "Robot Arena Simulation\n" +
                 "Version: 1.0\n" +
                 "This simulation demonstrates the behaviour of different types of robots in an arena.\n" +
-                "Developed by: Kieran Thompson";
+                "Developed by: Kieran Thompson. \n" +
+                "Student Number: 32025125";
         showTextDialog("About", aboutText);
     }
 

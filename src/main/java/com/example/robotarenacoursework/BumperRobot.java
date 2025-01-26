@@ -1,5 +1,11 @@
 package com.example.robotarenacoursework;
 
+/*
+    * This class is used to create a BumperRobot object
+    * It extends the MoveableRobot class and overrides the update method
+    * It is used to handle collisions between the robot and other robots
+ */
+
 class BumperRobot extends MoveableRobot {
     private double ringRadius;
 
@@ -27,7 +33,7 @@ class BumperRobot extends MoveableRobot {
             if (otherRobot != this && checkRingCollision(otherRobot)) {
                 // Make the other robot bounce away
                 otherRobot.setDirection(otherRobot.getDirection() + 180 + Math.random() * 20 - 10);
-                otherRobot.startDeccelerationTask();
+                otherRobot.setSpeed(otherRobot.getMaxSpeed());
             }
         }
         // Call the parent update method

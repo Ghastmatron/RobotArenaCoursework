@@ -1,6 +1,12 @@
 // SensorRobot.java
 package com.example.robotarenacoursework;
 
+/*
+    * This class is used to create a robot with sensors
+    * It extends the MoveableRobot class and adds whiskers to detect obstacles
+    * It also corrects the movement of the robot if an obstacle is detected
+ */
+
 class SensorRobot extends MoveableRobot {
     private double whiskerLength;
     private double leftWhiskerX;

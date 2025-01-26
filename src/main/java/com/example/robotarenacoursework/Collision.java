@@ -1,5 +1,11 @@
 package com.example.robotarenacoursework;
 
+/*
+    * This class is used to handle collisions between the robot and the obstacles
+    * It extends the Arena class
+    * It contains methods to check if the robot has collided with an obstacle, another robot or the arena boundaries
+ */
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -68,9 +74,7 @@ public class Collision extends Arena {
             for (Obstacle obstacle : obstacles) {
                 if (checkObstacleCollision(robot, obstacle)) {
                     // Handle the collision
-                    robot.startDeccelerationTask();
                     obstacle.handleCollision(robot);
-                    robot.setDirection(robot.getDirection() + 180 + Math.random() * 20 - 10);
                 }
             }
             // Check if the robot is colliding with other robots
