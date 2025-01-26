@@ -58,7 +58,7 @@ public class Arena {
     }
 
     // Method to handle mouse pressed
-    public void handleMousePressed(MouseEvent event, UserInterfaceController controller) {
+    public void handleMousePressed(MouseEvent event, userInterfaceController controller) {
         if (controller.isRunning()) return; // If the controller is running, return
 
         double x = event.getX(); // Get the x position of the mouse
@@ -84,7 +84,7 @@ public class Arena {
     }
 
 
-    public void handleMouseDragged(MouseEvent event, UserInterfaceController controller) {
+    public void handleMouseDragged(MouseEvent event, userInterfaceController controller) {
         if (controller.isRunning()) return; // If the controller is running, return
 
         double x = event.getX(); // Get the x position of the mouse
@@ -100,7 +100,7 @@ public class Arena {
         controller.redrawCanvas();
     }
 
-    public void handleMouseReleased(MouseEvent event, UserInterfaceController controller) {
+    public void handleMouseReleased(MouseEvent event, userInterfaceController controller) {
         if (controller.isRunning()) return; // If the controller is running, return
 
         isDragging = false; // Set isDragging to false

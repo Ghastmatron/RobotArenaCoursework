@@ -38,7 +38,7 @@ public class GUI extends Application {
             Parent root = loader.load(); // Load the FXML file
 
             // Get the controller
-            UserInterfaceController controller = loader.getController();
+            userInterfaceController controller = loader.getController();
             controller.setGUI(this); // Set the GUI instance in the controller
 
             customCanvas = new CustomCanvas(null); // Create a new CustomCanvas instance

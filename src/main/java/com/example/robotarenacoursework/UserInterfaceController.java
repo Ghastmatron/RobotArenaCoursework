@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Controller class for the user interface
-public class UserInterfaceController {
+public class userInterfaceController {
     private CustomCanvas customCanvas;
     private GUI gui;
     private Arena arena;
